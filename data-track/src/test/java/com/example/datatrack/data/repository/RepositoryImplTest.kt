@@ -2,7 +2,6 @@ package com.example.datatrack.data.repository
 
 import app.cash.turbine.test
 import com.example.datatrack.data.datasource.RemoteDataSource
-import com.example.datatrack.data.dto.DataDto
 import com.example.datatrack.data.utils.TestData
 import com.example.domain.domain.model.VehicleInfo
 import io.mockk.coEvery

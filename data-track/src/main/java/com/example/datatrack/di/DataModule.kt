@@ -34,8 +34,8 @@ interface DataModule {
     fun bindRepository(useCase: RepositoryImpl): Repository
 
     companion object {
-        private const val TIME_OUT = 15L
-        private const val API_KEY = "apiKey"
+        private const val TIME_OUT = 30L
+        private const val API_KEY = "key"
 
         private val json = Json {
             ignoreUnknownKeys = true

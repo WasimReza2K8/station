@@ -14,10 +14,10 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.io.IOException
 
-class GetVehiclesUseCaseImplTest {
+class GetStationsUseCaseImplTest {
     private val repository: Repository = mockk()
     private val testDispatcher: BaseDispatcherProvider = TestDispatcherProvider()
-    private val useCase = GetVehiclesUseCaseImpl(repository, testDispatcher)
+    private val useCase = GetStationsUseCaseImpl(repository, testDispatcher)
     private val userLocation: Location = mockk()
 
     private fun userLocation(): Location {
@@ -32,8 +32,8 @@ class GetVehiclesUseCaseImplTest {
     @Test
     fun `test getVehicleUseCase with valid input return success output`() = runTest {
         val provided = TestData.vehicleListProvided
-        val expected = GetVehiclesUseCase.Output.Success(TestData.vehicleListExpected)
-        val input = GetVehiclesUseCase.Input(userLocation)
+        val expected = GetStationsUseCase.Output.Success(TestData.vehicleListExpected)
+        val input = GetStationsUseCase.Input(userLocation)
 
         coEvery {
             repository.getVehicles()
@@ -52,8 +52,8 @@ class GetVehiclesUseCaseImplTest {
     @Test
     fun `test getVehicleUseCase with network error input return network error output`() = runTest {
         val provided = IOException("test")
-        val expected = GetVehiclesUseCase.Output.NetworkError
-        val input = GetVehiclesUseCase.Input(userLocation())
+        val expected = GetStationsUseCase.Output.NetworkError
+        val input = GetStationsUseCase.Input(userLocation())
         coEvery {
             repository.getVehicles()
         } returns flow { emit(throw provided) }
@@ -67,8 +67,8 @@ class GetVehiclesUseCaseImplTest {
     @Test
     fun `test getVehicleUseCase with unknown error input return unknown error output`() = runTest {
         val provided = IllegalStateException("test")
-        val expected = GetVehiclesUseCase.Output.UnknownError("test")
-        val input = GetVehiclesUseCase.Input(userLocation())
+        val expected = GetStationsUseCase.Output.UnknownError("test")
+        val input = GetStationsUseCase.Input(userLocation())
         coEvery {
             repository.getVehicles()
         } returns flow { emit(throw provided) }

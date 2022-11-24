@@ -3,8 +3,8 @@ package com.example.domain.di
 import com.example.core.dispatcher.BaseDispatcherProvider
 import com.example.core.dispatcher.MainDispatcherProvider
 import com.example.domain.domain.repository.Repository
-import com.example.domain.domain.usecase.GetVehiclesUseCase
-import com.example.domain.domain.usecase.GetVehiclesUseCaseImpl
+import com.example.domain.domain.usecase.GetStationsUseCase
+import com.example.domain.domain.usecase.GetStationsUseCaseImpl
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
@@ -25,7 +25,7 @@ object DomainModule {
     fun provideGetVehicleUseCase(
         repository: Repository,
         mainDispatcherProvider: BaseDispatcherProvider
-    ): GetVehiclesUseCase {
-        return GetVehiclesUseCaseImpl(repository, mainDispatcherProvider)
+    ): GetStationsUseCase {
+        return GetStationsUseCaseImpl(repository, mainDispatcherProvider)
     }
 }

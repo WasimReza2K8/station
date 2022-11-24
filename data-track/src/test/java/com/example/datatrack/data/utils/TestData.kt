@@ -1,8 +1,5 @@
 package com.example.datatrack.data.utils
 
-import com.example.datatrack.data.dto.AttributesDto
-import com.example.datatrack.data.dto.DataDto
-import com.example.datatrack.data.dto.RootResponseDto
 import com.example.domain.domain.model.VehicleInfo
 
 object TestData {

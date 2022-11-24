@@ -29,6 +29,7 @@ dependencies {
     implementation commonDependencies.google.material
     implementation project(path: ':core')
     implementation project(path: ':domain-track')
+    implementation project(path: ':data-track')
 
     testImplementation commonTestDependencies.junit4
     testImplementation commonTestDependencies.coroutineTest

@@ -7,9 +7,9 @@ android {
 
     defaultConfig {
 
-        buildConfigField "String", "API_KEY","\"9ef7d5b3-21c7-4a78-a92b-91efef42cabb\""
+        buildConfigField "String", "API_KEY","\"1e2cb9c6-a0e9-4a68-bc09-f3c97a6bd8e4\""
 
-        buildConfigField "String", "BASE_URL","\"https://api.jsonstorage.net/v1/json/\""
+        buildConfigField "String", "BASE_URL","\"https://api.openchargemap.io/\""
     }
 }
 

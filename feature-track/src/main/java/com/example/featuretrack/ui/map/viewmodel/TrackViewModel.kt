@@ -1,43 +1,61 @@
 package com.example.featuretrack.ui.map.viewmodel
 
-import android.location.Location
 import androidx.lifecycle.viewModelScope
 import com.example.core.ext.exhaustive
+import com.example.core.state.Output
 import com.example.core.viewmodel.BaseViewModel
-import com.example.domain.domain.usecase.GetVehiclesUseCase
-import com.example.featuretrack.mapper.DomainToUiMapper
+import com.example.domain.domain.usecase.GetStationsUseCase
+import com.example.featuretrack.model.mapToStationUiInfo
+import com.example.featuretrack.ui.map.viewmodel.TrackContract.Event.OnInitViewModel
+import com.example.featuretrack.ui.map.viewmodel.TrackContract.Event.OnMarkerClicked
+import com.example.featuretrack.ui.map.viewmodel.TrackContract.Event.OnRetry
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class TrackViewModel @Inject constructor(
-    private val getVehiclesUseCase: GetVehiclesUseCase
+    private val getStationsUseCase: GetStationsUseCase
 ) : BaseViewModel<TrackContract.Event, TrackContract.State, TrackContract.Effect>() {
 
-    private val mapper = DomainToUiMapper()
+    companion object {
+        const val INITIAL_LATITUDE = 52.526
+        const val INITIAL_LONGITUDE = 13.415
+        const val INITIAL_DISTANCE = 5
+        const val INITIAL_DISTANCE_UNIT = "km"
+    }
 
-    private fun loadData(location: Location) {
+    init {
+        onEvent(OnInitViewModel)
+    }
+
+    private fun loadData() {
         viewModelScope.launch {
             updateState { copy(isLoading = true) }
-            getVehiclesUseCase.execute(GetVehiclesUseCase.Input(location)).collect { output ->
+            getStationsUseCase(
+                GetStationsUseCase.Input(
+                    lat = INITIAL_LATITUDE,
+                    lng = INITIAL_LONGITUDE,
+                    distance = INITIAL_DISTANCE,
+                    distanceUnit = INITIAL_DISTANCE_UNIT,
+                )
+            ).collect { output ->
                 when (output) {
-                    is GetVehiclesUseCase.Output.Success -> {
-                        val uiVehicleList = output.vehicleList.map {
-                            mapper.map(it)
+                    is Output.Success -> {
+                        Timber.e("stations: ${output.result}")
+                        val uiVehicleList = output.result.map {
+                            it.mapToStationUiInfo()
                         }
                         updateState {
-                            copy(
-                                vehicles = uiVehicleList,
-                                nearestVehicle = uiVehicleList.first()
-                            )
+                            copy(stationUiInfoList = uiVehicleList)
                         }
                     }
-                    is GetVehiclesUseCase.Output.NetworkError -> {
+                    is Output.NetworkError -> {
                         sendEffect { TrackContract.Effect.NetworkErrorEffect }
                     }
-                    is GetVehiclesUseCase.Output.UnknownError -> {
-                        sendEffect { TrackContract.Effect.UnknownErrorEffect(output.message) }
+                    is Output.UnknownError -> {
+                        sendEffect { TrackContract.Effect.UnknownErrorEffect("unknown error") }
                     }
                 }
                 updateState { copy(isLoading = false) }
@@ -51,35 +69,16 @@ class TrackViewModel @Inject constructor(
 
     override fun handleEvent(event: TrackContract.Event) {
         when (event) {
-            is TrackContract.Event.OnLocationAccessed -> {
-                loadData(event.location)
-            }
-            is TrackContract.Event.OnMarkerClicked -> {
-                event.marker.title?.let {
-                    val items = viewState.value.vehicles.filter { vehicleInfo ->
-                        vehicleInfo.id == event.marker.title
-                    }
-                    updateState {
-                        copy(
-                            nearestVehicle = items.first()
-                        )
-                    }
+            is OnInitViewModel, OnRetry -> loadData()
+            is OnMarkerClicked -> {
+                val items = viewState.value.stationUiInfoList.filter { stationUiInfo ->
+                    stationUiInfo.clusterItem.position == event.marker.position
                 }
-            }
-            is TrackContract.Event.OnFragmentStart, TrackContract.Event.OnRetry -> {
-                sendEffect { TrackContract.Effect.InitLocationAccessEffect }
-            }
-            is TrackContract.Event.OnNoGpsDialogClicked -> {
-                sendEffect { TrackContract.Effect.OpenLocationSettingsEffect }
-            }
-            is TrackContract.Event.OnUnableDialogClicked -> {
-                sendEffect { TrackContract.Effect.OpenApplicationSettingsEffect }
-            }
-            is TrackContract.Event.OnPermissionDenied -> {
-                sendEffect { TrackContract.Effect.PermissionDeniedEffect }
-            }
-            is TrackContract.Event.OnPermissionRationaleDialogClicked -> {
-                sendEffect { TrackContract.Effect.PermissionRequestEffect }
+                updateState {
+                    copy(
+                        nearestVehicle = items.first()
+                    )
+                }
             }
         }.exhaustive
     }

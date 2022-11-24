@@ -25,7 +25,7 @@ The technologies and tools I have used are given below:
 - Coroutines (flow)
 - Jetpack
 - Room
-- Junit
+- JUnit
 - mockk
 - turbine
 - chucker

@@ -2,9 +2,9 @@ package com.example.featuretrack.ui.map.viewmodel
 
 import android.location.Location
 import com.example.domain.domain.model.VehicleInfo
-import com.example.domain.domain.usecase.GetVehiclesUseCase
-import com.example.featuretrack.model.VehicleClusterItem
-import com.example.featuretrack.model.VehicleUiInfo
+import com.example.domain.domain.usecase.GetStationsUseCase
+import com.example.featuretrack.model.StationClusterItem
+import com.example.featuretrack.model.StationUiInfo
 import com.google.android.gms.maps.model.Marker
 import io.mockk.coEvery
 import io.mockk.every
@@ -24,7 +24,7 @@ import org.junit.Before
 import org.junit.Test
 
 class TrackViewModelTest {
-    private lateinit var useCase: GetVehiclesUseCase
+    private lateinit var useCase: GetStationsUseCase
     private lateinit var viewModel: TrackViewModel
     private val marker: Marker = mockk()
 
@@ -57,26 +57,26 @@ class TrackViewModelTest {
         )
     }
 
-    private fun uiList(): List<VehicleUiInfo> {
-        val vehicleUiInfo = VehicleUiInfo(
+    private fun uiList(): List<StationUiInfo> {
+        val stationUiInfo = StationUiInfo(
             id = "test_1",
             batteryLevel = 20,
-            clusterItem = VehicleClusterItem(53.02, 13.32, "test_1", "escooter"),
+            clusterItem = StationClusterItem(53.02, 13.32, "test_1", "escooter"),
             maxSpeed = 20,
             vehicleType = "escooter",
             hasHelmetBox = false,
             distance = 1.0
         )
         return listOf(
-            vehicleUiInfo,
-            vehicleUiInfo.copy(
+            stationUiInfo,
+            stationUiInfo.copy(
                 id = "test_2",
-                clusterItem = VehicleClusterItem(100.5, 32.6, "test_2", "escooter"),
+                clusterItem = StationClusterItem(100.5, 32.6, "test_2", "escooter"),
                 distance = 2.0
             ),
-            vehicleUiInfo.copy(
+            stationUiInfo.copy(
                 id = "test_3",
-                clusterItem = VehicleClusterItem(10.5, 54.6, "test_3", "escooter"),
+                clusterItem = StationClusterItem(10.5, 54.6, "test_3", "escooter"),
                 distance = 3.0
             )
         )
@@ -93,7 +93,7 @@ class TrackViewModelTest {
 
     @Test
     fun `test onLocationAccessed event return success state`() = runTest {
-        val provided = GetVehiclesUseCase.Output.Success(domainList())
+        val provided = GetStationsUseCase.Output.Success(domainList())
         val expected = uiList()
         coEvery {
             useCase.execute(any())
@@ -105,7 +105,7 @@ class TrackViewModelTest {
             .take(1)
             .collectLatest { state ->
                 MatcherAssert.assertThat(
-                    state.vehicles,
+                    state.stationUiInfoList,
                     CoreMatchers.equalTo(expected)
                 )
             }
@@ -115,7 +115,7 @@ class TrackViewModelTest {
     fun `test onLocationAccessed event return network error effect`() = runTest {
         coEvery {
             useCase.execute(any())
-        } returns flow { emit(GetVehiclesUseCase.Output.NetworkError) }
+        } returns flow { emit(GetStationsUseCase.Output.NetworkError) }
         viewModel = initViewModel()
         viewModel.onEvent(TrackContract.Event.OnLocationAccessed(userLocation()))
 
@@ -131,7 +131,7 @@ class TrackViewModelTest {
         val message = "test"
         coEvery {
             useCase.execute(any())
-        } returns flow { emit(GetVehiclesUseCase.Output.UnknownError(message)) }
+        } returns flow { emit(GetStationsUseCase.Output.UnknownError(message)) }
         viewModel = initViewModel()
         viewModel.onEvent(TrackContract.Event.OnLocationAccessed(userLocation()))
 
@@ -157,7 +157,7 @@ class TrackViewModelTest {
 
     @Test
     fun `test OnMarkerClicked event change nearBy Vehicle state`() = runTest {
-        val provided = GetVehiclesUseCase.Output.Success(domainList())
+        val provided = GetStationsUseCase.Output.Success(domainList())
         val expected = uiList()[1]
         coEvery {
             useCase.execute(any())

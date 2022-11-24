@@ -2,8 +2,6 @@ package com.example.datatrack.data.datasource
 
 import app.cash.turbine.test
 import com.example.datatrack.data.api.Api
-import com.example.datatrack.data.dto.DataDto
-import com.example.datatrack.data.dto.RootResponseDto
 import com.example.datatrack.data.utils.TestData
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -20,7 +18,7 @@ class RemoteDataSourceImplTest {
         val provided = TestData.responseDto
         val expected = provided.data
         coEvery {
-            service.getVehicles()
+            service.getChargingStations()
         } returns provided
 
         remoteDataSource.getRemoteVehicles().test {
@@ -34,7 +32,7 @@ class RemoteDataSourceImplTest {
         val provided = RootResponseDto(arrayListOf())
         val expected = emptyList<DataDto>()
         coEvery {
-            service.getVehicles()
+            service.getChargingStations()
         } returns provided
 
         remoteDataSource.getRemoteVehicles().test {
