@@ -12,9 +12,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/core" />
-            <option value="$PROJECT_DIR$/data-track" />
-            <option value="$PROJECT_DIR$/domain-track" />
-            <option value="$PROJECT_DIR$/feature-track" />
+            <option value="$PROJECT_DIR$/data-station" />
+            <option value="$PROJECT_DIR$/domain-station" />
+            <option value="$PROJECT_DIR$/feature-station" />
           </set>
         </option>
       </GradleProjectSettings>

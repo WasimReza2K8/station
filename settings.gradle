@@ -14,7 +14,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Track"
 include ':app'
-include ':domain-track'
+include ':domain-station'
 include ':core'
-include ':feature-track'
-include ':data-track'
+include ':feature-station'
+include ':data-station'

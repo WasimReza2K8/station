@@ -39,8 +39,7 @@ android {
         freeCompilerArgs += '-Xopt-in=com.google.accompanist.pager.ExperimentalPagerApi'
         freeCompilerArgs += '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi'
         freeCompilerArgs += '-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi'
-        jvmTarget = '1.8'
-        useIR = true
+        jvmTarget = '11'
     }
 
     packagingOptions {
@@ -69,4 +68,6 @@ dependencies {
     detektPlugins commonDependencies.other.detekt
 
     implementation commonDependencies.other.timber
+
+    testImplementation commonTestDependencies.assertj
 }

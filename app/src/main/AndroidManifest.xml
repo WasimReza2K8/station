@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.track">
+    package="com.example.station">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
 
     <application
-        android:name=".TrackApplication"
+        android:name="com.example.station.StationApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -20,7 +20,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name="com.example.featuretrack.ui.TrackActivity"
+            android:name="com.example.featurestation.ui.StationActivity"
             android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>

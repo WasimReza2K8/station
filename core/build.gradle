@@ -11,4 +11,5 @@ dependencies {
 
     implementation commonDependencies.other.glide
     implementation commonDependencies.other.glideCompiler
+    implementation commonDependencies.other.retrofit2
 }

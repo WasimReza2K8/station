@@ -1,13 +1,13 @@
-# Track
+# Charging Station
 In this challenge I have developed an that get user location and show the available vehicles with nearest vehicle detail.
 To solve this challenge I have used MVI (Model, View, Intent)architecture with clean architecture approach. The whole code base is divided into 5 modules app, core, 
-feature-track, domain-track and data-track. The app module contains only the app related code. 
+feature-station, domain-station and data-station. The app module contains only the app related code. 
 
 The core module contains the code which is common for the whole project. If we extend any feature then we can reuse the code of core module. So the most 
 common functionalities are placed into core module.
 
-feature-track module contains the code related to the feature. We track the vehicles in this feature and now this is the only feature that app contains. 
-The feature module depends on its domain module. The feature module contains the code of presentaton layer in the clean code approach. It contains the ui,
+feature-station module contains the code related to the feature. We track the charging stations in this feature and now this is the only feature that app contains. 
+The feature module depends on its domain module. The feature module contains the code of presentation layer in the clean code approach. It contains the ui,
 view model, ui data model , util and mapper classes. View model is dependent on use case for business logic. In MVI architecture, the user interactions are 
 considered as events or intent which change the model and recreate immutable states which is shown in the view. 
 
