@@ -24,7 +24,6 @@ The technologies and tools I have used are given below:
 - Kotlinx serialization
 - Coroutines (flow)
 - Jetpack
-- Room
 - JUnit
 - mockk
 - turbine
