@@ -1,6 +1,6 @@
 # Charging Station
 In this challenge I have developed an that get user location and show the available vehicles with nearest vehicle detail.
-To solve this challenge I have used MVI (Model, View, Intent)architecture with clean architecture approach. The whole code base is divided into 5 modules app, core, 
+To solve this challenge I have used MVI(Model, View, Intent)+MVVM architecture with clean architecture approach. The whole code base is divided into 5 modules app, core, 
 feature-station, domain-station and data-station. The app module contains only the app related code. 
 
 The core module contains the code which is common for the whole project. If we extend any feature then we can reuse the code of core module. So the most 
@@ -16,7 +16,7 @@ depend on any other module. In this feature use case just get the vehicles from 
 the nearest vehicle at the 1st position of the vehicle list. 
 
 The data layer is responsible for providing the data from different sources. For this app this layer will collect data from the backend server and provide 
-them to domain module. So the data flow goes like data -> domain -> presentation. 
+them to domain module. So the data flow goes like data -> domain -> presentation.
 The technologies and tools I have used are given below:
 - kotlin
 - Hilt
