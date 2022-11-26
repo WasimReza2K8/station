@@ -18,9 +18,7 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -118,11 +116,7 @@ class StationViewModelTest {
 
         viewModel.onEvent(OnViewStarted)
 
-        viewModel.viewState
-            .take(1)
-            .collectLatest { state ->
-                assertThat(state.stationUiInfoList == expected).isTrue
-            }
+        assertThat(viewModel.viewState.value.stationUiInfoList == expected).isTrue
     }
 
     @Test
@@ -133,11 +127,7 @@ class StationViewModelTest {
 
         viewModel.onEvent(OnViewStarted)
 
-        viewModel.viewState
-            .take(1)
-            .collectLatest { state ->
-                assertThat(state.errorMessage == "network error").isTrue
-            }
+        assertThat(viewModel.viewState.value.errorMessage == "network error").isTrue
     }
 
     @Test
@@ -148,11 +138,7 @@ class StationViewModelTest {
 
         viewModel.onEvent(OnViewStarted)
 
-        viewModel.viewState
-            .take(1)
-            .collectLatest { state ->
-                assertThat(state.errorMessage == "unknown error").isTrue
-            }
+        assertThat(viewModel.viewState.value.errorMessage == "unknown error").isTrue
     }
 
     @Test
@@ -165,11 +151,7 @@ class StationViewModelTest {
 
         viewModel.onEvent(StationContract.Event.OnRetry)
 
-        viewModel.viewState
-            .take(1)
-            .collectLatest { state ->
-                assertThat(state.stationUiInfoList == expected).isTrue
-            }
+        assertThat(viewModel.viewState.value.stationUiInfoList == expected).isTrue
     }
 
     @Test
@@ -180,11 +162,7 @@ class StationViewModelTest {
 
         viewModel.onEvent(StationContract.Event.OnRetry)
 
-        viewModel.viewState
-            .take(1)
-            .collectLatest { state ->
-                assertThat(state.errorMessage == "network error").isTrue
-            }
+        assertThat(viewModel.viewState.value.errorMessage == "network error").isTrue
     }
 
     @Test
@@ -195,11 +173,7 @@ class StationViewModelTest {
 
         viewModel.onEvent(StationContract.Event.OnRetry)
 
-        viewModel.viewState
-            .take(1)
-            .collectLatest { state ->
-                assertThat(state.errorMessage == "unknown error").isTrue
-            }
+        assertThat(viewModel.viewState.value.errorMessage == "unknown error").isTrue
     }
 
     @Test
@@ -211,14 +185,9 @@ class StationViewModelTest {
         } returns flow { emit(provided) }
 
         viewModel.onEvent(OnViewStarted)
-
         viewModel.onEvent(OnMarkerClicked(marker))
 
-        viewModel.viewState
-            .take(1)
-            .collectLatest { state ->
-                assertThat(state.selectedStation == expected).isTrue
-            }
+        assertThat(viewModel.viewState.value.selectedStation == expected).isTrue
     }
 
     @Test
@@ -230,14 +199,9 @@ class StationViewModelTest {
         } returns flow { emit(provided) }
 
         viewModel.onEvent(OnViewStarted)
-
         viewModel.onEvent(OnMapClicked)
 
-        viewModel.viewState
-            .take(1)
-            .collectLatest { state ->
-                assertThat(state.selectedStation == expected).isTrue
-            }
+        assertThat(viewModel.viewState.value.selectedStation == expected).isTrue
     }
 
     @Test
@@ -248,7 +212,6 @@ class StationViewModelTest {
         } returns flow { emit(provided) }
 
         viewModel.onEvent(OnViewStarted)
-
         viewModel.onEvent(OnViewStopped)
 
         assertThat(viewModel.job!!.isActive).isFalse
@@ -261,14 +224,9 @@ class StationViewModelTest {
         } returns flow { emit(Output.NetworkError) }
 
         viewModel.onEvent(OnViewStarted)
-
         viewModel.onEvent(OnErrorMessageShown)
 
-        viewModel.viewState
-            .take(1)
-            .collectLatest { state ->
-                assertThat(state.errorMessage == null).isTrue
-            }
+        assertThat(viewModel.viewState.value.errorMessage == null).isTrue
     }
 
     @org.junit.After
