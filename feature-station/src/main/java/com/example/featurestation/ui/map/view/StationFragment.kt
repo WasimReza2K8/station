@@ -27,7 +27,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.google.maps.android.clustering.ClusterManager
@@ -41,8 +40,6 @@ class StationFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
     private lateinit var googleMap: GoogleMap
     private val binding: FragmentMapBinding by viewBinding(FragmentMapBinding::bind)
     private val viewModel: StationViewModel by viewModels()
-
-    private lateinit var cancellationTokenSource: CancellationTokenSource
 
     private lateinit var clusterManager: ClusterManager<StationClusterItem>
 
@@ -149,7 +146,6 @@ class StationFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
 
     override fun onStart() {
         super.onStart()
-        cancellationTokenSource = CancellationTokenSource()
         viewModel.onEvent(OnViewStarted)
     }
 
@@ -194,7 +190,6 @@ class StationFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
 
     override fun onStop() {
         super.onStop()
-        cancellationTokenSource.cancel()
         viewModel.onEvent(StationContract.Event.OnViewStopped)
     }
 }
