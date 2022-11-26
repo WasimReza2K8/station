@@ -1,6 +1,6 @@
-package com.example.datatrack.data.api
+package com.example.datastation.data.api
 
-import com.example.datatrack.data.dto.StationDto
+import com.example.datastation.data.dto.StationDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 

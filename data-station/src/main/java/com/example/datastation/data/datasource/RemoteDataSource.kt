@@ -1,16 +1,14 @@
-package com.example.datatrack.data.datasource
+package com.example.datastation.data.datasource
 
-import com.example.datatrack.data.api.Api
-import com.example.datatrack.data.dto.StationDto
+import com.example.datastation.data.api.Api
+import com.example.datastation.data.dto.StationDto
 import com.example.domain.domain.usecase.GetStationsUseCase.Input
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class RemoteDataSource @Inject constructor(
-    private val api: Api
-) {
+class RemoteDataSource @Inject constructor(private val api: Api) {
     fun getRemoteStations(input: Input): Flow<List<StationDto>> =
         flow {
             while (true) {

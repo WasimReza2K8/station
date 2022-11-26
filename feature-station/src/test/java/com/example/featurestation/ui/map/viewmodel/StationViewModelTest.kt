@@ -4,10 +4,10 @@ import com.example.core.resProvider.ResourceProvider
 import com.example.core.state.Output
 import com.example.domain.domain.model.StationInfo
 import com.example.domain.domain.usecase.GetStationsUseCase
+import com.example.featurestation.R
 import com.example.featurestation.model.StationClusterItem
 import com.example.featurestation.model.StationUiInfo
-import com.example.featurestation.ui.map.viewmodel.StationContract.Effect.NetworkErrorEffect
-import com.example.featurestation.ui.map.viewmodel.StationContract.Effect.UnknownErrorEffect
+import com.example.featurestation.ui.map.viewmodel.StationContract.Event.OnErrorMessageShown
 import com.example.featurestation.ui.map.viewmodel.StationContract.Event.OnMapClicked
 import com.example.featurestation.ui.map.viewmodel.StationContract.Event.OnMarkerClicked
 import com.example.featurestation.ui.map.viewmodel.StationContract.Event.OnViewStarted
@@ -30,14 +30,26 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Test
 
-class TrackViewModelTest {
+class StationViewModelTest {
     private lateinit var useCase: GetStationsUseCase
     private lateinit var viewModel: StationViewModel
-    private val marker: Marker = mockk()
+    private val marker: Marker = mockk {
+        every {
+            position
+        } returns LatLng(53.02, 13.32)
+    }
     private val resourceProvider: ResourceProvider = mockk {
         every {
             getString(any(), any())
         } returns "mock"
+
+        every {
+            getString(R.string.network_error)
+        } returns "network error"
+
+        every {
+            getString(R.string.unknown_error)
+        } returns "unknown error"
     }
 
     private lateinit var testDispatcher: TestDispatcher
@@ -78,7 +90,7 @@ class TrackViewModelTest {
         val stationUiInfo = StationUiInfo(
             id = 1,
             title = "test title",
-            clusterItem = StationClusterItem(53.02, 13.32, "test title", ""),
+            clusterItem = StationClusterItem(53.02, 13.32, "test title"),
             address = "address1\naddress2\npostCode, town",
             numberOfPoints = "mock",
         )
@@ -86,18 +98,18 @@ class TrackViewModelTest {
             stationUiInfo,
             stationUiInfo.copy(
                 id = 2,
-                clusterItem = StationClusterItem(100.5, 32.6, "test title", ""),
+                clusterItem = StationClusterItem(100.5, 32.6, "test title"),
             ),
             stationUiInfo.copy(
                 id = 3,
-                clusterItem = StationClusterItem(10.5, 54.6, "test title", ""),
+                clusterItem = StationClusterItem(10.5, 54.6, "test title"),
 
                 )
         )
     }
 
     @Test
-    fun `When onViewStarted, Then provide success state`() = runTest {
+    fun `Given valid list of stations, When onViewStarted, Then provide success state`() = runTest {
         val provided = Output.Success(domainList())
         val expected = uiList()
         coEvery {
@@ -114,37 +126,37 @@ class TrackViewModelTest {
     }
 
     @Test
-    fun `When onViewStarted, Then provide networkError effect`() = runTest {
+    fun `Given networkError from useCase, When onViewStarted, Then provide networkError message to state`() = runTest {
         coEvery {
             useCase(any())
         } returns flow { emit(Output.NetworkError) }
 
         viewModel.onEvent(OnViewStarted)
 
-        viewModel.effect
+        viewModel.viewState
             .take(1)
-            .collectLatest { effect ->
-                assertThat(effect is NetworkErrorEffect).isTrue
+            .collectLatest { state ->
+                assertThat(state.errorMessage == "network error").isTrue
             }
     }
 
     @Test
-    fun `When onViewStarted, Then provide unknownError effect`() = runTest {
+    fun `Given unknownError from useCase, When onViewStarted, Then provide unknownError effect`() = runTest {
         coEvery {
             useCase(any())
         } returns flow { emit(Output.UnknownError) }
 
         viewModel.onEvent(OnViewStarted)
 
-        viewModel.effect
+        viewModel.viewState
             .take(1)
-            .collectLatest { effect ->
-                assertThat(effect is UnknownErrorEffect).isTrue
+            .collectLatest { state ->
+                assertThat(state.errorMessage == "unknown error").isTrue
             }
     }
 
     @Test
-    fun `When onRetry clicked, Then provide success state`() = runTest {
+    fun `Given valid response from useCase, When onRetry clicked, Then provide success state`() = runTest {
         val provided = Output.Success(domainList())
         val expected = uiList()
         coEvery {
@@ -161,46 +173,42 @@ class TrackViewModelTest {
     }
 
     @Test
-    fun `When onRetry clicked, Then provide networkError effect`() = runTest {
+    fun `Given networkError from useCase, When onRetry clicked, Then provide networkError effect`() = runTest {
         coEvery {
             useCase(any())
         } returns flow { emit(Output.NetworkError) }
 
         viewModel.onEvent(StationContract.Event.OnRetry)
 
-        viewModel.effect
+        viewModel.viewState
             .take(1)
-            .collectLatest { effect ->
-                assertThat(effect is NetworkErrorEffect).isTrue
+            .collectLatest { state ->
+                assertThat(state.errorMessage == "network error").isTrue
             }
     }
 
     @Test
-    fun `When onRetry clicked, Then provide unknownError effect`() = runTest {
+    fun `Given unknownError from useCase, When onRetry clicked, Then provide unknownError effect`() = runTest {
         coEvery {
             useCase(any())
         } returns flow { emit(Output.UnknownError) }
 
         viewModel.onEvent(StationContract.Event.OnRetry)
 
-        viewModel.effect
+        viewModel.viewState
             .take(1)
-            .collectLatest { effect ->
-                assertThat(effect is UnknownErrorEffect).isTrue
+            .collectLatest { state ->
+                assertThat(state.errorMessage == "unknown error").isTrue
             }
     }
 
     @Test
-    fun `When OnMarkerClicked, Then change selected Station state`() = runTest {
+    fun `Given valid list of stations, When OnMarkerClicked, Then change selected Station state`() = runTest {
         val provided = Output.Success(domainList())
         val expected = uiList()[0]
         coEvery {
             useCase(any())
         } returns flow { emit(provided) }
-
-        every {
-            marker.position
-        } returns LatLng(53.02, 13.32)
 
         viewModel.onEvent(OnViewStarted)
 
@@ -214,16 +222,12 @@ class TrackViewModelTest {
     }
 
     @Test
-    fun `When OnMapClicked, Then change selected Station become null`() = runTest {
+    fun `Given valid list of stations, When OnMapClicked, Then change selected Station become null`() = runTest {
         val provided = Output.Success(domainList())
         val expected = null
         coEvery {
             useCase(any())
         } returns flow { emit(provided) }
-
-        every {
-            marker.position
-        } returns LatLng(53.02, 13.32)
 
         viewModel.onEvent(OnViewStarted)
 
@@ -237,21 +241,34 @@ class TrackViewModelTest {
     }
 
     @Test
-    fun `When OnViewStopped, Then the coroutine is cancelled`() = runTest {
+    fun `Given valid stations, When OnViewStopped, Then the coroutine is cancelled`() = runTest {
         val provided = Output.Success(domainList())
         coEvery {
             useCase(any())
         } returns flow { emit(provided) }
 
-        every {
-            marker.position
-        } returns LatLng(53.02, 13.32)
-
         viewModel.onEvent(OnViewStarted)
 
         viewModel.onEvent(OnViewStopped)
 
-        assertThat(!viewModel.job!!.isActive).isTrue
+        assertThat(viewModel.job!!.isActive).isFalse
+    }
+
+    @Test
+    fun `Given networkError from useCase, When OnErrorMessageShown called, Then the error is nullified`() = runTest {
+        coEvery {
+            useCase(any())
+        } returns flow { emit(Output.NetworkError) }
+
+        viewModel.onEvent(OnViewStarted)
+
+        viewModel.onEvent(OnErrorMessageShown)
+
+        viewModel.viewState
+            .take(1)
+            .collectLatest { state ->
+                assertThat(state.errorMessage == null).isTrue
+            }
     }
 
     @org.junit.After

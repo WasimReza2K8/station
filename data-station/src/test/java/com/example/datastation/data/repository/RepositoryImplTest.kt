@@ -1,9 +1,9 @@
-package com.example.datatrack.data.repository
+package com.example.datastation.data.repository
 
 import app.cash.turbine.test
-import com.example.datatrack.data.datasource.RemoteDataSource
-import com.example.datatrack.data.dto.StationDto
-import com.example.datatrack.data.utils.TestData
+import com.example.datastation.data.datasource.RemoteDataSource
+import com.example.datastation.data.dto.StationDto
+import com.example.datastation.data.utils.TestData
 import com.example.domain.domain.model.StationInfo
 import com.example.domain.domain.usecase.GetStationsUseCase
 import io.mockk.coEvery

@@ -20,7 +20,6 @@ class StationClusterRenderer(
         markerOptions: MarkerOptions,
     ) {
         markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_charging_station))
-        markerOptions.title(item.title)
-        markerOptions.snippet(null)
+        super.onBeforeClusterItemRendered(item, markerOptions)
     }
 }

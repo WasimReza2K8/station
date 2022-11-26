@@ -15,9 +15,9 @@ import com.example.featurestation.databinding.FragmentMapBinding
 import com.example.featurestation.model.StationClusterItem
 import com.example.featurestation.model.StationUiInfo
 import com.example.featurestation.ui.map.viewmodel.StationContract
-import com.example.featurestation.ui.map.viewmodel.StationContract.Effect.NetworkErrorEffect
-import com.example.featurestation.ui.map.viewmodel.StationContract.Effect.UnknownErrorEffect
+import com.example.featurestation.ui.map.viewmodel.StationContract.Event.OnErrorMessageShown
 import com.example.featurestation.ui.map.viewmodel.StationContract.Event.OnMapClicked
+import com.example.featurestation.ui.map.viewmodel.StationContract.Event.OnViewStarted
 import com.example.featurestation.ui.map.viewmodel.StationViewModel
 import com.example.featurestation.utils.Constants.INITIAL_LATITUDE
 import com.example.featurestation.utils.Constants.INITIAL_LONGITUDE
@@ -63,26 +63,7 @@ class StationFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
         binding.btnRetry.setOnClickListener {
             viewModel.onEvent(StationContract.Event.OnRetry)
         }
-        observeEffect()
         standardBottomSheetBehavior = BottomSheetBehavior.from(binding.sheet.bottomSheet)
-        hideBottomSheet()
-    }
-
-    private fun observeEffect() {
-        lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.effect.collect { effect ->
-                    when (effect) {
-                        is NetworkErrorEffect -> {
-                            showSnackBar(getString(R.string.network_error))
-                        }
-                        is UnknownErrorEffect -> {
-                            showSnackBar(getString(R.string.unknown_error))
-                        }
-                    }
-                }
-            }
-        }
     }
 
     private fun showSnackBar(text: String) {
@@ -103,6 +84,10 @@ class StationFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
                     } else {
                         hideBottomSheet()
                     }
+                    viewState.errorMessage?.let { error ->
+                        showSnackBar(error)
+                        viewModel.onEvent(OnErrorMessageShown)
+                    }
                 }
             }
         }
@@ -116,14 +101,14 @@ class StationFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
         }
     }
 
-    private fun selectStation(nearestVehicle: StationUiInfo) {
+    private fun selectStation(selectedStation: StationUiInfo) {
         standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         with(binding.sheet) {
-            tvTitle.text = nearestVehicle.title
-            tvAddressText.text = nearestVehicle.address
-            if (nearestVehicle.numberOfPoints.isNotEmpty()) {
+            tvTitle.text = selectedStation.title
+            tvAddressText.text = selectedStation.address
+            if (selectedStation.numberOfPoints.isNotEmpty()) {
                 tvNumberOfPoint.visibility = View.VISIBLE
-                tvNumberOfPoint.text = nearestVehicle.numberOfPoints
+                tvNumberOfPoint.text = selectedStation.numberOfPoints
             } else {
                 tvNumberOfPoint.visibility = View.GONE
             }
@@ -131,7 +116,9 @@ class StationFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
     }
 
     private fun hideBottomSheet() {
-        standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        if (standardBottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN) {
+            standardBottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
     }
 
     @SuppressLint("PotentialBehaviorOverride")
@@ -154,8 +141,8 @@ class StationFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
         }
     }
 
-    private fun addItems(vehicleList: List<StationUiInfo>) {
-        val clusterItems = vehicleList.map { it.clusterItem }
+    private fun addItems(stationUiInfoList: List<StationUiInfo>) {
+        val clusterItems = stationUiInfoList.map { it.clusterItem }
         clusterManager.addItems(clusterItems)
         clusterManager.cluster()
     }
@@ -163,7 +150,7 @@ class StationFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
     override fun onStart() {
         super.onStart()
         cancellationTokenSource = CancellationTokenSource()
-        viewModel.onEvent(StationContract.Event.OnViewStarted)
+        viewModel.onEvent(OnViewStarted)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {

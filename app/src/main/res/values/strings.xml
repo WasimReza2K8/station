@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">Charging Station</string>
-    <string name="title_activity_track">TrackActivity</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyDZUMV71gIp5SE1hJ0qht_vlY6OuFJtPEE</string>
 </resources>

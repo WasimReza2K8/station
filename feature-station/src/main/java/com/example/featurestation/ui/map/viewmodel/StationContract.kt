@@ -1,6 +1,5 @@
 package com.example.featurestation.ui.map.viewmodel
 
-import com.example.core.viewmodel.ViewEffect
 import com.example.core.viewmodel.ViewEvent
 import com.example.core.viewmodel.ViewState
 import com.example.featurestation.model.StationUiInfo
@@ -10,13 +9,9 @@ class StationContract {
     data class State(
         val isLoading: Boolean = false,
         val stationUiInfoList: List<StationUiInfo> = emptyList(),
-        val selectedStation: StationUiInfo? = null
+        val selectedStation: StationUiInfo? = null,
+        val errorMessage: String? = null,
     ) : ViewState
-
-    sealed interface Effect : ViewEffect {
-        object UnknownErrorEffect : Effect
-        object NetworkErrorEffect : Effect
-    }
 
     sealed interface Event : ViewEvent {
         object OnRetry : Event
@@ -24,5 +19,6 @@ class StationContract {
         data class OnMarkerClicked(val marker: Marker) : Event
         object OnViewStopped : Event
         object OnViewStarted : Event
+        object OnErrorMessageShown : Event
     }
 }

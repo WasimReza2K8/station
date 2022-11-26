@@ -26,7 +26,7 @@
             android:layout_height="40dp"
             android:layout_marginStart="@dimen/dimen_16"
             android:layout_marginTop="@dimen/dimen_16"
-            android:contentDescription="@string/vehicle_image"
+            android:contentDescription="@string/station_image"
             android:src="@drawable/ic_charging_station"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

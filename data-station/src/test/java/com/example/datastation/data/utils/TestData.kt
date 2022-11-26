@@ -1,7 +1,7 @@
-package com.example.datatrack.data.utils
+package com.example.datastation.data.utils
 
-import com.example.datatrack.data.dto.AddressInfoDto
-import com.example.datatrack.data.dto.StationDto
+import com.example.datastation.data.dto.AddressInfoDto
+import com.example.datastation.data.dto.StationDto
 import com.example.domain.domain.model.StationInfo
 
 object TestData {

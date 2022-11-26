@@ -1,15 +1,16 @@
-package com.example.datatrack.di
+package com.example.datastation.di
 
 import android.content.Context
 import com.chuckerteam.chucker.api.ChuckerInterceptor
-import com.example.datatrack.BuildConfig
-import com.example.datatrack.data.api.Api
-import com.example.datatrack.data.repository.RepositoryImpl
+import com.example.datastation.BuildConfig
+import com.example.datastation.data.api.Api
+import com.example.datastation.data.repository.RepositoryImpl
 import com.example.domain.domain.repository.Repository
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
@@ -26,6 +27,7 @@ import javax.inject.Singleton
 interface DataModule {
 
     @Binds
+    @Reusable
     fun bindRepository(useCase: RepositoryImpl): Repository
 
     companion object {
@@ -42,12 +44,9 @@ interface DataModule {
             val original = chain.request()
             val originalHttpUrl = original.url
 
-            val url = originalHttpUrl.newBuilder()
-                .addQueryParameter(API_KEY, BuildConfig.API_KEY)
-                .build()
+            val url = originalHttpUrl.newBuilder().addQueryParameter(API_KEY, BuildConfig.API_KEY).build()
 
-            val reqBuilder = original.newBuilder()
-                .url(url)
+            val reqBuilder = original.newBuilder().url(url)
             chain.proceed(reqBuilder.build())
         }
 
@@ -55,26 +54,18 @@ interface DataModule {
         @Provides
         fun provideOkHttpClient(
             interceptor: Interceptor,
-            @ApplicationContext context: Context
-        ): OkHttpClient = OkHttpClient.Builder()
-            .connectTimeout(TIME_OUT, TimeUnit.SECONDS)
-            .readTimeout(TIME_OUT, TimeUnit.SECONDS)
-            .addNetworkInterceptor(ChuckerInterceptor.Builder(context).build())
-            .addInterceptor(interceptor)
-            .build()
+            @ApplicationContext context: Context,
+        ): OkHttpClient =
+            OkHttpClient.Builder().connectTimeout(TIME_OUT, TimeUnit.SECONDS).readTimeout(TIME_OUT, TimeUnit.SECONDS)
+                .addNetworkInterceptor(ChuckerInterceptor.Builder(context).build()).addInterceptor(interceptor).build()
 
         @Singleton
         @Provides
         fun provideAPI(okHttpClient: OkHttpClient): Api {
             val contentType = "application/json".toMediaType()
-            return Retrofit.Builder()
-                .baseUrl(BuildConfig.BASE_URL)
-                .client(okHttpClient)
-                .addConverterFactory(
-                    json.asConverterFactory(contentType)
-                )
-                .build()
-                .create(Api::class.java)
+            return Retrofit.Builder().baseUrl(BuildConfig.BASE_URL).client(okHttpClient).addConverterFactory(
+                json.asConverterFactory(contentType)
+            ).build().create(Api::class.java)
         }
     }
 }

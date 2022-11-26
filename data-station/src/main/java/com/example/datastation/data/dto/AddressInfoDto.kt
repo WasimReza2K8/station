@@ -1,4 +1,4 @@
-package com.example.datatrack.data.dto
+package com.example.datastation.data.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

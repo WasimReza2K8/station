@@ -19,7 +19,6 @@ fun StationInfo.mapToStationUiInfo(resourceProvider: ResourceProvider) =
             lat = lat,
             lng = lng,
             titleString = title,
-            snippetString = "",
         ),
         title = title,
         numberOfPoints = numberOfPoints?.let {
