@@ -7,7 +7,6 @@ data class StationClusterItem(
     val lat: Double,
     val lng: Double,
     val titleString: String,
-    val snippetString: String? = null,
 ) : ClusterItem {
     private val position: LatLng = LatLng(lat, lng)
 
@@ -15,5 +14,5 @@ data class StationClusterItem(
 
     override fun getTitle(): String = titleString
 
-    override fun getSnippet(): String? = snippetString
+    override fun getSnippet(): String? = null
 }

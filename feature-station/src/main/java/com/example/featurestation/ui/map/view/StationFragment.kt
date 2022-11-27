@@ -18,6 +18,7 @@ import com.example.featurestation.ui.map.viewmodel.StationContract
 import com.example.featurestation.ui.map.viewmodel.StationContract.Event.OnErrorMessageShown
 import com.example.featurestation.ui.map.viewmodel.StationContract.Event.OnMapClicked
 import com.example.featurestation.ui.map.viewmodel.StationContract.Event.OnViewStarted
+import com.example.featurestation.ui.map.viewmodel.StationContract.Event.OnViewStopped
 import com.example.featurestation.ui.map.viewmodel.StationViewModel
 import com.example.featurestation.utils.Constants.INITIAL_LATITUDE
 import com.example.featurestation.utils.Constants.INITIAL_LONGITUDE
@@ -176,10 +177,10 @@ class StationFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
                 .position(latLng)
                 .title(getString(R.string.your_position))
         )
-        moveToMap(latLng)
+        moveMapToPosition(latLng)
     }
 
-    private fun moveToMap(latLng: LatLng) {
+    private fun moveMapToPosition(latLng: LatLng) {
         googleMap.moveCamera(
             CameraUpdateFactory.newLatLngZoom(
                 LatLng(latLng.latitude, latLng.longitude),
@@ -190,6 +191,6 @@ class StationFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
 
     override fun onStop() {
         super.onStop()
-        viewModel.onEvent(StationContract.Event.OnViewStopped)
+        viewModel.onEvent(OnViewStopped)
     }
 }
