@@ -17,7 +17,12 @@ class GetStationsUseCaseImpl @Inject constructor(
     private val mainDispatcherProvider: BaseDispatcherProvider
 ) : GetStationsUseCase {
     override fun invoke(input: Input): Flow<Output<List<StationInfo>>> {
-        return repository.getStations(input).map { stations ->
+        return repository.getStations(
+            lat = input.lat,
+            lng = input.lng,
+            distance = input.distance,
+            distanceUnit = input.distanceUnit,
+        ).map { stations ->
             getStationsOutput(stations)
         }.catch { exception ->
             if (exception.isNetworkException()) {

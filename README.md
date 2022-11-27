@@ -15,11 +15,11 @@ will collect data from the backend server and provide them to domain module. So 
 like data -> domain -> presentation.
 
 The domain layer is responsible the business logic. The use case contains the business logic. The 
-domain module is agnostic of any other module. It does not depend on any other module. In this 
-feature use case just get the charging stations from repository and provide them to the presentation 
-layer. For this MVP, this layer is doing nothing rather than providing data to the feature however,
-in a real big project this layer is very important as it contains all the business logic which can be 
-reused to other features.
+domain module is agnostic of any other module which is related to this feature. It does not depend 
+on any other module. In this feature use case just get the charging stations from repository and 
+provide them to the presentation layer. For this MVP, this layer is doing nothing rather than 
+providing data to the feature however, in a real big project this layer is very important as it 
+contains all the business logic which can be reused to other features.
 
 feature-station module contains the code of the presentation layer of the feature. We show the 
 charging stations in this feature and now this is the only feature that app contains. The feature 

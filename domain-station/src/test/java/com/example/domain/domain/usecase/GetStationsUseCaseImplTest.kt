@@ -25,7 +25,7 @@ class GetStationsUseCaseImplTest {
         val expected = Output.Success(provided)
 
         coEvery {
-            repository.getStations(any())
+            repository.getStations(any(), any(), any(), any())
         } returns flow { emit(provided) }
 
         useCase(
@@ -46,7 +46,7 @@ class GetStationsUseCaseImplTest {
         val provided = IOException("test")
         val expected = Output.NetworkError
         coEvery {
-            repository.getStations(any())
+            repository.getStations(any(), any(), any(), any())
         } returns flow { throw provided }
 
         useCase(
@@ -68,7 +68,7 @@ class GetStationsUseCaseImplTest {
             val provided = IllegalStateException("test")
             val expected = Output.UnknownError
             coEvery {
-                repository.getStations(any())
+                repository.getStations(any(), any(), any(), any())
             } returns flow { throw provided }
 
             useCase(

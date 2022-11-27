@@ -5,7 +5,6 @@ import com.example.datastation.data.datasource.RemoteDataSource
 import com.example.datastation.data.dto.StationDto
 import com.example.datastation.data.utils.TestData
 import com.example.domain.domain.model.StationInfo
-import com.example.domain.domain.usecase.GetStationsUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flow
@@ -23,16 +22,14 @@ class RepositoryImplTest {
         val provided = TestData.stationDto
         val expected = listOf(TestData.stationInfo)
         coEvery {
-            remoteSource.getRemoteStations(any())
+            remoteSource.getRemoteStations(any(), any(), any(), any())
         } returns flow { emit(listOf(provided)) }
 
         repository.getStations(
-            GetStationsUseCase.Input(
-                lat = 53.45,
-                lng = 13.46,
-                distance = 5,
-                distanceUnit = "km",
-            )
+            lat = 53.45,
+            lng = 13.46,
+            distance = 5,
+            distanceUnit = "km",
         ).test {
             assertThat(expected == awaitItem()).isTrue
             awaitComplete()
@@ -44,16 +41,14 @@ class RepositoryImplTest {
         val provided = emptyList<StationDto>()
         val expected = emptyList<StationInfo>()
         coEvery {
-            remoteSource.getRemoteStations(any())
+            remoteSource.getRemoteStations(any(), any(), any(), any())
         } returns flow { emit(provided) }
 
         repository.getStations(
-            GetStationsUseCase.Input(
-                lat = 53.45,
-                lng = 13.46,
-                distance = 5,
-                distanceUnit = "km",
-            )
+            lat = 53.45,
+            lng = 13.46,
+            distance = 5,
+            distanceUnit = "km",
         ).test {
             assertThat(expected == awaitItem()).isTrue
             awaitComplete()
@@ -65,16 +60,14 @@ class RepositoryImplTest {
         runTest {
             val providedData = IOException()
             coEvery {
-                remoteSource.getRemoteStations(any())
+                remoteSource.getRemoteStations(any(), any(), any(), any())
             } returns flow { throw providedData }
 
             repository.getStations(
-                GetStationsUseCase.Input(
-                    lat = 53.45,
-                    lng = 13.46,
-                    distance = 5,
-                    distanceUnit = "km",
-                )
+                lat = 53.45,
+                lng = 13.46,
+                distance = 5,
+                distanceUnit = "km",
             ).test {
                 assertThat(providedData == awaitError()).isTrue
             }

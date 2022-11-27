@@ -4,7 +4,6 @@ import app.cash.turbine.test
 import com.example.datastation.data.api.Api
 import com.example.datastation.data.dto.StationDto
 import com.example.datastation.data.utils.TestData
-import com.example.domain.domain.usecase.GetStationsUseCase
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.collectLatest
@@ -27,12 +26,10 @@ class RemoteDataSourceTest {
             } returns provided
 
             remoteDataSource.getRemoteStations(
-                GetStationsUseCase.Input(
-                    lat = 53.45,
-                    lng = 13.46,
-                    distance = 5,
-                    distanceUnit = "km",
-                )
+                lat = 53.45,
+                lng = 13.46,
+                distance = 5,
+                distanceUnit = "km",
             ).test {
                 assertThat(provided == awaitItem()).isTrue
             }
@@ -46,12 +43,10 @@ class RemoteDataSourceTest {
         } returns provided
 
         remoteDataSource.getRemoteStations(
-            GetStationsUseCase.Input(
-                lat = 53.45,
-                lng = 13.46,
-                distance = 5,
-                distanceUnit = "km",
-            )
+            lat = 53.45,
+            lng = 13.46,
+            distance = 5,
+            distanceUnit = "km",
         ).test {
             assertThat(provided == awaitItem()).isTrue
         }
@@ -67,12 +62,10 @@ class RemoteDataSourceTest {
             } returns provided
 
             remoteDataSource.getRemoteStations(
-                GetStationsUseCase.Input(
-                    lat = 53.45,
-                    lng = 13.46,
-                    distance = 5,
-                    distanceUnit = "km",
-                )
+                lat = 53.45,
+                lng = 13.46,
+                distance = 5,
+                distanceUnit = "km",
             ).take(2).collectLatest {
                 items.add(it)
             }
