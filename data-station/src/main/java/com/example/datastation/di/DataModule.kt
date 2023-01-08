@@ -43,9 +43,7 @@ interface DataModule {
         fun provideInterceptor() = Interceptor { chain ->
             val original = chain.request()
             val originalHttpUrl = original.url
-
             val url = originalHttpUrl.newBuilder().addQueryParameter(API_KEY, BuildConfig.API_KEY).build()
-
             val reqBuilder = original.newBuilder().url(url)
             chain.proceed(reqBuilder.build())
         }
